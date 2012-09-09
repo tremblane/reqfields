@@ -1,0 +1,38 @@
+#!/bin/bash
+#
+################################################################
+# Filename: reqfields
+#
+# Description: This script checks for missing fields in CDETS
+#  bugs. It is meant for use when deupdate fails and complains
+#  that "Error: The following Field(s) Are Mandatory"
+#
+# Usage: reqfields <field name> <list of bugIDs>
+#
+# Author: jadew
+#
+# Current Maintainer: jadew
+#
+# Reviewer(s): ?
+#
+#################################################################
+
+# Verify inputs
+# Must be at least 1 input (1 or more bugids)
+if (($# < 1))
+then
+	echo Not enough parameters
+	echo Usage: reqfields bugid [bugid ...]
+	exit
+fi
+
+echo
+echo -n "Fields: "
+read FIELDS
+
+for FIELD in $FIELDS
+do
+	echo
+	echo Missing Field: $FIELD
+	findcr -i `echo "$@" | tr ' ' ','` -w Identifier,$FIELD | awk '{if ($NF==$1) print $1}' | sort
+done
